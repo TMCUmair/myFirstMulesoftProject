@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd">
+	<munit:config name="practice-project-api-suite.xml" />
+	<munit:test name="practice-project-apiFlow-test" doc:id="9a0f63db-fb8c-49a4-a79d-233392a01287" >
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock Synchronous Remote Function Call" doc:id="08bf89a5-02fe-4171-86f6-78af9d128e5e" processor="sap:synchronous-remote-function-call">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="26b6363a-d6d1-4635-9582-201e72255fad" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[output application/xml --- readUrl('classpath://practiceprojectapiFlowtest\mock_payload.dwl')]" mediaType="application/xml" encoding="UTF-8" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+			<munit:set-event doc:name="Set Input" doc:id="e1dfc93c-f9e7-4d25-96f1-195f5432bc0b" >
+				<munit:payload value="#[readUrl('classpath://practiceprojectapiFlowtest\set-event_payload.dwl')]" encoding="UTF-8" />
+				<munit:attributes value="#[readUrl('classpath://practiceprojectapiFlowtest\set-event_attributes.dwl')]" />
+			</munit:set-event>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to practice-project-apiFlow" doc:id="311ff321-d19b-48e9-93f4-eba9ff84caa3" name="practice-project-apiFlow"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert payload" doc:id="06a3837e-413a-42b3-b694-ae1475c48903" message="The payload does not match">
+				<munit-tools:that ><![CDATA[#[%dw 2.0
+import practiceprojectapiFlowtest::assert_expression_payload
+---
+assert_expression_payload::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+			</munit-tools:assert>
+		</munit:validation>
+	</munit:test>
+
+
+</mule>
