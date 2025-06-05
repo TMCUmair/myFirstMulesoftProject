@@ -47,6 +47,44 @@
 				      </properties>
 				    </cloudHubDeployment>
 					<classifier>mule-application</classifier>
+					<sharedLibraries>
+						<sharedLibrary>
+							<groupId>com.sap.conn.jco</groupId>
+							<artifactId>com.sap.conn.jco.sapjco3</artifactId>
+						</sharedLibrary>
+						<sharedLibrary>
+							<groupId>com.sap.conn.jco</groupId>
+							<artifactId>libsapjco3</artifactId>
+						</sharedLibrary>
+						<sharedLibrary>
+							<groupId>com.sap.conn.idoc</groupId>
+							<artifactId>com.sap.conn.idoc.sapidoc3</artifactId>
+						</sharedLibrary>
+					</sharedLibraries>
+
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>com.mulesoft.munit.tools</groupId>
+				<artifactId>munit-maven-plugin</artifactId>
+				<version>${munit.version}</version>
+				<executions>
+					<execution>
+						<id>test</id>
+						<phase>test</phase>
+						<goals>
+							<goal>test</goal>
+							<goal>coverage-report</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<coverage>
+						<runCoverage>true</runCoverage>
+						<formats>
+							<format>html</format>
+						</formats>
+					</coverage>
 				</configuration>
 			</plugin>
 		</plugins>
@@ -70,6 +108,36 @@
 			<artifactId>mule-file-connector</artifactId>
 			<version>1.5.2</version>
 			<classifier>mule-plugin</classifier>
+		</dependency>
+		<dependency>
+			<groupId>com.mulesoft.connectors</groupId>
+			<artifactId>mule-sap-connector</artifactId>
+			<version>5.9.12</version>
+			<classifier>mule-plugin</classifier>
+		</dependency>
+		<dependency>
+			<groupId>com.sap.conn.jco</groupId>
+			<artifactId>com.sap.conn.jco.sapjco3</artifactId>
+			<version>3.x.x</version>
+		</dependency>
+		<!-- 	<dependency>
+			<groupId>com.sap.conn.jco</groupId>
+			<artifactId>libsapjco3</artifactId>
+			<version>3.x.x</version>
+			<classifier>external-library</classifier>
+			<type>dylib</type>
+		</dependency> -->
+		<dependency>
+			<groupId>com.sap.conn.jco</groupId>
+			<artifactId>libsapjco3</artifactId>
+			<version>3.x.x</version>
+			<classifier>external-library</classifier>
+			<type>dll</type>
+		</dependency>
+		<dependency>
+			<groupId>com.sap.conn.idoc</groupId>
+			<artifactId>com.sap.conn.idoc.sapidoc3</artifactId>
+			<version>3.x.x</version>
 		</dependency>
 		<dependency>
 			<groupId>com.mulesoft.munit</groupId>
