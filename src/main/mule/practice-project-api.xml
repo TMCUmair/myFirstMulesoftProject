@@ -1,147 +1,191 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
 
-<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:sap="http://www.mulesoft.org/schema/mule/sap"
-	xmlns:file="http://www.mulesoft.org/schema/mule/file"
-	xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
-http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
-http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd
-http://www.mulesoft.org/schema/mule/sap http://www.mulesoft.org/schema/mule/sap/current/mule-sap.xsd
-http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
-		<sap:sap-config name="SAP_Config" doc:name="SAP Config" doc:id="f5e941be-e9a8-460c-906d-2f6ddbddd479" disableJcoInternalCache="true">
-		<sap:simple-connection-provider-connection systemNumber="61" client="001" username="COM_MUL_ACE" password="W+9FNz3lBYVqnzS7I_3FAY" applicationServerHost="10.42.102.50" traceFromServerFlag="true" cpicTracingLevel="INHERIT">
-			<sap:extended-properties >
-				<sap:extended-property key="jco.trace.to.file" value="true" />
-			</sap:extended-properties>
-		</sap:simple-connection-provider-connection>
-	</sap:sap-config>
-	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="86ec3320-2f57-4eb0-b2cb-3c6b476d184b" >
-		<http:listener-connection host="0.0.0.0" port="8081" />
-	</http:listener-config>
-	<flow name="practice-project-apiFlow" doc:id="26967861-97da-45c2-9589-8b84a01d51e7" >
-		<http:listener doc:name="Listener" doc:id="cc07b8fb-57ef-48cc-b5d5-91996f75b947" config-ref="HTTP_Listener_config" path="/"/>
-		<ee:transform doc:name="Transform Message" doc:id="43ca840c-74fb-4512-8579-eab6f42da47b" >
-			<ee:message >
-				<ee:set-payload ><![CDATA[%dw 2.0
-output application/json
----
-{
-	"ZBAPI_DOCUMENT_CHANGE_GX1": {
-		"import": {
-			"DOCUMENT_HEADER_IN": {
-				"DOC_TYPE": "ZCQ",
-				"SD_DOC_CAT": "G",
-				"CURRENCY": "EUR",
-				"REFDOCTYPE": "ID-01775",
-				"SALES_ORG": "0003",
-				"DISTR_CHAN": "01",
-				"DIVISION": "01",
-				"INCOTERMS1": "CFR",
-				"INCOTERMS2": "Costs and freight",
-				"CT_VALID_F": "20250210",
-				"CT_VALID_T": "20250210"
-			}
-		},
-		"tables": {
-			"DOCUMENT_CONDITIONS_IN": {
-				"row": {
-					"ITM_NUMBER": "000010",
-					"COND_TYPE": "ZPRI",
-					"COND_VALUE": "150.0"
-				}
-			},
-			"DOCUMENT_ITEMS_IN": {
-				"row": {
-					"ITM_NUMBER": "000010",
-					"MATERIAL": "000000000050000110",
-					"TARGET_QTY": "2.0",
-					"TARGET_QU": "TO"
-				}
-			},
-			"DOCUMENT_PARTNERS": {
-				"row": {
-					"PARTN_ROLE": "AG",
-					"PARTN_NUMB": "2647893"
-				}
-			},
-			"DOCUMENT_TEXT": {
-				"row": {
-					"ITM_NUMBER": "000010",
-					"TEXT_ID": "ZCRM",
-					"LANGU": "",
-					"TEXT_LINE": "a0LAa000007Zrv3MAC"
-				}
-			}
-		}
-	}
-}]]></ee:set-payload>
-			</ee:message>
-		</ee:transform>
-		<ee:transform doc:name="Transform Message" doc:id="f9efc8c2-5304-4b58-92bb-7df5ef330d35" >
-			<ee:message >
-				<ee:set-payload ><![CDATA[%dw 2.0
-output application/xml encoding="UTF-8"
----
-{
-    ZBAPI_DOCUMENT_CHANGE_GX1: {
-        'import': {
-            DOCUMENT_HEADER_IN: {
-                DOC_TYPE: payload.ZBAPI_DOCUMENT_CHANGE_GX1.'import'.DOCUMENT_HEADER_IN.DOC_TYPE,
-                SD_DOC_CAT: payload.ZBAPI_DOCUMENT_CHANGE_GX1.'import'.DOCUMENT_HEADER_IN.SD_DOC_CAT,
-                CURRENCY: payload.ZBAPI_DOCUMENT_CHANGE_GX1.'import'.DOCUMENT_HEADER_IN.CURRENCY,
-                REFDOCTYPE: payload.ZBAPI_DOCUMENT_CHANGE_GX1.'import'.DOCUMENT_HEADER_IN.REFDOCTYPE,
-                SALES_ORG: payload.ZBAPI_DOCUMENT_CHANGE_GX1.'import'.DOCUMENT_HEADER_IN.SALES_ORG,
-                DISTR_CHAN: payload.ZBAPI_DOCUMENT_CHANGE_GX1.'import'.DOCUMENT_HEADER_IN.DISTR_CHAN,
-                DIVISION: payload.ZBAPI_DOCUMENT_CHANGE_GX1.'import'.DOCUMENT_HEADER_IN.DIVISION,
-                INCOTERMS1: payload.ZBAPI_DOCUMENT_CHANGE_GX1.'import'.DOCUMENT_HEADER_IN.INCOTERMS1,
-                INCOTERMS2: payload.ZBAPI_DOCUMENT_CHANGE_GX1.'import'.DOCUMENT_HEADER_IN.INCOTERMS2,
-                CT_VALID_F: payload.ZBAPI_DOCUMENT_CHANGE_GX1.'import'.DOCUMENT_HEADER_IN.CT_VALID_F,
-                CT_VALID_T: payload.ZBAPI_DOCUMENT_CHANGE_GX1.'import'.DOCUMENT_HEADER_IN.CT_VALID_T
-            }
-        },
-        tables: {
-            DOCUMENT_CONDITIONS_IN: {
-                row: {
-                    ITM_NUMBER: payload.ZBAPI_DOCUMENT_CHANGE_GX1.tables.DOCUMENT_CONDITIONS_IN.row.ITM_NUMBER,
-                    COND_TYPE: payload.ZBAPI_DOCUMENT_CHANGE_GX1.tables.DOCUMENT_CONDITIONS_IN.row.COND_TYPE,
-                    COND_VALUE: payload.ZBAPI_DOCUMENT_CHANGE_GX1.tables.DOCUMENT_CONDITIONS_IN.row.COND_VALUE
-                }
-            },
-            DOCUMENT_ITEMS_IN: {
-                row: {
-                    ITM_NUMBER: payload.ZBAPI_DOCUMENT_CHANGE_GX1.tables.DOCUMENT_ITEMS_IN.row.ITM_NUMBER,
-                    MATERIAL: payload.ZBAPI_DOCUMENT_CHANGE_GX1.tables.DOCUMENT_ITEMS_IN.row.MATERIAL,
-                    TARGET_QTY: payload.ZBAPI_DOCUMENT_CHANGE_GX1.tables.DOCUMENT_ITEMS_IN.row.TARGET_QTY,
-                    TARGET_QU: payload.ZBAPI_DOCUMENT_CHANGE_GX1.tables.DOCUMENT_ITEMS_IN.row.TARGET_QU
-                }
-            },
-            DOCUMENT_PARTNERS: {
-                row: {
-                    PARTN_ROLE: payload.ZBAPI_DOCUMENT_CHANGE_GX1.tables.DOCUMENT_PARTNERS.row.PARTN_ROLE,
-                    PARTN_NUMB: payload.ZBAPI_DOCUMENT_CHANGE_GX1.tables.DOCUMENT_PARTNERS.row.PARTN_NUMB
-                }
-            },
-            DOCUMENT_TEXT: {
-                row: {
-                    ITM_NUMBER: payload.ZBAPI_DOCUMENT_CHANGE_GX1.tables.DOCUMENT_TEXT.row.ITM_NUMBER,
-                    TEXT_ID: payload.ZBAPI_DOCUMENT_CHANGE_GX1.tables.DOCUMENT_TEXT.row.TEXT_ID,
-                    LANGU: payload.ZBAPI_DOCUMENT_CHANGE_GX1.tables.DOCUMENT_TEXT.row.LANGU,
-                    TEXT_LINE: payload.ZBAPI_DOCUMENT_CHANGE_GX1.tables.DOCUMENT_TEXT.row.TEXT_LINE
-                }
-            }
-        }
-    }
-}]]></ee:set-payload>
-			</ee:message>
-		</ee:transform>
-		<sap:synchronous-remote-function-call doc:name="Synchronous Remote Function Call" doc:id="26b6363a-d6d1-4635-9582-201e72255fad" config-ref="SAP_Config" key="ZBAPI_CUSTOMER_CHANGE_GX1"/>
-		<ee:transform doc:name="Transform Message" doc:id="7a863188-6fac-4aa9-a1ee-85f5f2405bc5" >
-			<ee:message >
-				<ee:set-payload ><![CDATA[%dw 2.0
-output application/xml
----
-payload]]></ee:set-payload>
-			</ee:message>
-		</ee:transform>
-	
-	</flow>
-</mule>
+	<groupId>com.mycompany</groupId>
+	<artifactId>practice-project-api</artifactId>
+	<version>1.0.0-SNAPSHOT</version>
+	<packaging>mule-application</packaging>
+
+	<name>practice-project-api</name>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+		<app.runtime>4.9.0</app.runtime>
+		<mule.maven.plugin.version>4.3.0</mule.maven.plugin.version>
+		<munit.version>3.4.0</munit.version>
+	</properties>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-clean-plugin</artifactId>
+				<version>3.2.0</version>
+			</plugin>
+			<plugin>
+				<groupId>org.mule.tools.maven</groupId>
+				<artifactId>mule-maven-plugin</artifactId>
+				<version>${mule.maven.plugin.version}</version>
+				<extensions>true</extensions>
+				<configuration>
+				  <cloudHubDeployment>
+				      <uri>https://anypoint.mulesoft.com</uri>
+				      <muleVersion>${app.runtime}</muleVersion>
+				      <username>${username}</username>
+				      <password>${password}</password>
+				      <applicationName>${cloudhub.application.name}</applicationName>
+				      <environment>${environment}</environment>
+				      <region>${region}</region>
+				      <workers>${workers}</workers>
+				      <workerType>${workerType}</workerType>
+				      <objectStoreV2>true</objectStoreV2>
+				      <properties>
+				        <key>value</key>
+				      </properties>
+				    </cloudHubDeployment>
+					<classifier>mule-application</classifier>
+					<sharedLibraries>
+						<sharedLibrary>
+							<groupId>com.sap.conn.jco</groupId>
+							<artifactId>com.sap.conn.jco.sapjco3</artifactId>
+						</sharedLibrary>
+						<sharedLibrary>
+							<groupId>com.sap.conn.jco</groupId>
+							<artifactId>libsapjco3</artifactId>
+						</sharedLibrary>
+						<sharedLibrary>
+							<groupId>com.sap.conn.idoc</groupId>
+							<artifactId>com.sap.conn.idoc.sapidoc3</artifactId>
+						</sharedLibrary>
+					</sharedLibraries>
+
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>com.mulesoft.munit.tools</groupId>
+				<artifactId>munit-maven-plugin</artifactId>
+				<version>${munit.version}</version>
+				<executions>
+					<execution>
+						<id>test</id>
+						<phase>test</phase>
+						<goals>
+							<goal>test</goal>
+							<goal>coverage-report</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<coverage>
+						<runCoverage>true</runCoverage>
+						<formats>
+							<format>html</format>
+						</formats>
+					</coverage>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.mule.connectors</groupId>
+			<artifactId>mule-http-connector</artifactId>
+			<version>1.10.3</version>
+			<classifier>mule-plugin</classifier>
+		</dependency>
+		<dependency>
+			<groupId>org.mule.connectors</groupId>
+			<artifactId>mule-sockets-connector</artifactId>
+			<version>1.2.5</version>
+			<classifier>mule-plugin</classifier>
+		</dependency>
+		<dependency>
+			<groupId>org.mule.connectors</groupId>
+			<artifactId>mule-file-connector</artifactId>
+			<version>1.5.2</version>
+			<classifier>mule-plugin</classifier>
+		</dependency>
+		<dependency>
+			<groupId>com.mulesoft.connectors</groupId>
+			<artifactId>mule-sap-connector</artifactId>
+			<version>5.9.12</version>
+			<classifier>mule-plugin</classifier>
+		</dependency>
+		<dependency>
+			<groupId>com.sap.conn.jco</groupId>
+			<artifactId>com.sap.conn.jco.sapjco3</artifactId>
+			<version>3.x.x</version>
+		</dependency>
+		<!-- 	<dependency>
+			<groupId>com.sap.conn.jco</groupId>
+			<artifactId>libsapjco3</artifactId>
+			<version>3.x.x</version>
+			<classifier>external-library</classifier>
+			<type>dylib</type>
+		</dependency> -->
+		<dependency>
+			<groupId>com.sap.conn.jco</groupId>
+			<artifactId>libsapjco3</artifactId>
+			<version>3.x.x</version>
+			<classifier>external-library</classifier>
+			<type>dll</type>
+		</dependency>
+		<dependency>
+			<groupId>com.sap.conn.idoc</groupId>
+			<artifactId>com.sap.conn.idoc.sapidoc3</artifactId>
+			<version>3.x.x</version>
+		</dependency>
+		<dependency>
+			<groupId>com.mulesoft.munit</groupId>
+			<artifactId>munit-runner</artifactId>
+			<version>3.4.0</version>
+			<classifier>mule-plugin</classifier>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.mulesoft.munit</groupId>
+			<artifactId>munit-tools</artifactId>
+			<version>3.4.0</version>
+			<classifier>mule-plugin</classifier>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.mule.weave</groupId>
+			<artifactId>assertions</artifactId>
+			<version>1.2.1</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
+	<repositories>
+		<repository>
+			<id>anypoint-exchange-v3</id>
+			<name>Anypoint Exchange</name>
+			<url>https://maven.anypoint.mulesoft.com/api/v3/maven</url>
+			<layout>default</layout>
+		</repository>
+		<repository>
+			<id>mulesoft-releases</id>
+			<name>MuleSoft Releases Repository</name>
+			<url>https://repository.mulesoft.org/releases/</url>
+			<layout>default</layout>
+		</repository>
+	</repositories>
+
+	<pluginRepositories>
+		<pluginRepository>
+			<id>mulesoft-releases</id>
+			<name>MuleSoft Releases Repository</name>
+			<layout>default</layout>
+			<url>https://repository.mulesoft.org/releases/</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</pluginRepository>
+	</pluginRepositories>
+
+</project>
